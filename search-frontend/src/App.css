@@ -251,3 +251,39 @@ input[type="number"]::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
+
+.bazar-chip {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  background-color: #ff6b00;
+  color: white;
+  padding: 4px 6px;
+  border-radius: 4px;
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  z-index: 2;
+  font-weight: 500;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  line-height: 1;
+}
+
+.bazar-chip:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+  background-color: #ff7b1a;
+}
+
+.bazar-logo {
+  width: 11px;
+  height: 11px;
+  flex-shrink: 0;
+  display: block;
+  filter: brightness(0) invert(1);
+}

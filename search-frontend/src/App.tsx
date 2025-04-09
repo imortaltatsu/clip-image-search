@@ -95,6 +95,16 @@ function App() {
                     alt={`Result ${index + 1}`}
                     loading="lazy"
                   />
+                  <div 
+                    className="bazar-chip flex items-center gap-2"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      window.open(`https://bazar.arnode.asia/asset#/asset/${result.hash}`, '_blank');
+                    }}
+                  >
+                    <span>View on </span>
+                    <img src="/bazar.svg" alt="Bazar" className="bazar-logo" style={{ width: '11px', height: '10px' }}/>
+                  </div>
                 </div>
               ))}
             </div>
