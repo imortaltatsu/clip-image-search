@@ -4,11 +4,11 @@ import './App.css'
 
 interface SearchResult {
   hash: string;
-  isSelected: boolean;
 }
 
 function App() {
   const [searchText, setSearchText] = useState('')
+  const [numResults, setNumResults] = useState(15)
   const [results, setResults] = useState<SearchResult[]>([])
   const [isLoading, setIsLoading] = useState(false)
 
@@ -18,42 +18,30 @@ function App() {
       const config = {
         method: 'post',
         maxBodyLength: Infinity,
-        url: 'http://arfetch.adityaberry.me/search',
+        url: 'https://arfetch.adityaberry.me/search',
         headers: { 
           'Content-Type': 'application/json'
         },
         data: JSON.stringify({
           text: searchText,
-          num_results: 15
+          num_results: numResults
         })
       }
 
       const response = await axios.request(config)
-      setResults(response.data.map((hash: string) => ({ hash, isSelected: false })))
+      setResults(response.data.map((hash: string) => ({ hash })))
     } catch (error) {
       console.error('Error searching:', error)
+      alert('Failed to connect to the server. Please try again later.')
     } finally {
       setIsLoading(false)
     }
   }
 
-  const toggleSelection = (index: number) => {
-    setResults(results.map((result, i) => 
-      i === index ? { ...result, isSelected: !result.isSelected } : result
-    ))
-  }
-
-  const viewSelected = () => {
-    const selectedHashes = results.filter(r => r.isSelected).map(r => r.hash)
-    selectedHashes.forEach(hash => {
-      window.open(`http://arnode.asia/${hash}`, '_blank')
-    })
-  }
-
   return (
     <div className="app-container">
       <div className="search-container">
-        <h1>Retro Search</h1>
+        <h1>AOSearch</h1>
         <div className="search-box">
           <input
             type="text"
@@ -62,6 +50,31 @@ function App() {
             placeholder="Enter your search query..."
             onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
           />
+          <input
+            type="number"
+            value={numResults}
+            onChange={(e) => setNumResults(Math.max(1, parseInt(e.target.value) || 1))}
+            onKeyPress={(e) => {
+              if (!/[0-9]/.test(e.key) && e.key !== 'Enter') {
+                e.preventDefault();
+              }
+              if (e.key === 'Enter') {
+                handleSearch();
+              }
+            }}
+            min="1"
+            style={{ 
+              width: '3em', 
+              padding: '8px 0',
+              textAlign: 'center',
+              fontSize: '14px',
+              WebkitAppearance: 'none',
+              MozAppearance: 'textfield',
+              margin: '0 8px',
+              minWidth: 'unset',
+              flex: '0 0 auto'
+            }}
+          />
           <button onClick={handleSearch} disabled={isLoading}>
             {isLoading ? 'Searching...' : 'Search'}
           </button>
@@ -69,34 +82,19 @@ function App() {
 
         {results.length > 0 && (
           <div className="results-container">
-            <div className="results-header">
-              <h2>Search Results</h2>
-              <button onClick={viewSelected} className="view-selected">
-                View Selected ({results.filter(r => r.isSelected).length})
-              </button>
-            </div>
+            <h2>Search Results</h2>
             <div className="image-grid">
               {results.map((result, index) => (
                 <div 
                   key={result.hash} 
-                  className={`image-item ${result.isSelected ? 'selected' : ''}`}
-                  onClick={() => toggleSelection(index)}
+                  className="image-item"
+                  onClick={() => window.open(`http://arnode.asia/${result.hash}`, '_blank')}
                 >
                   <img 
                     src={`http://arnode.asia/${result.hash}`}
                     alt={`Result ${index + 1}`}
                     loading="lazy"
                   />
-                  <div className="image-overlay">
-                    <input
-                      type="checkbox"
-                      checked={result.isSelected}
-                      onChange={(e) => {
-                        e.stopPropagation();
-                        toggleSelection(index);
-                      }}
-                    />
-                  </div>
                 </div>
               ))}
             </div>
